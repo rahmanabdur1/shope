@@ -13,6 +13,7 @@ interface Category {
 
 const CategorySection: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -20,7 +21,6 @@ const CategorySection: React.FC = () => {
         const response = await fetch('https://api.shope.com.bd/api/v1/public/hero-categories');
         const data = await response.json();
 
-        // Ensure proper data structure
         if (Array.isArray(data)) {
           setCategories(data);
         } else {
@@ -34,6 +34,14 @@ const CategorySection: React.FC = () => {
     fetchCategories();
   }, []);
 
+  const handleMouseEnter = (category: Category) => {
+    setHoveredCategory(category);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredCategory(null);
+  };
+
   return (
     <div
       style={{
@@ -43,22 +51,24 @@ const CategorySection: React.FC = () => {
         top: '0',
         left: '125px',
       }}
+      onMouseLeave={handleMouseLeave} // This ensures both parent and child sections remain visible on hover.
     >
-      {/* Category Section */}
+      {/* Parent Categories */}
       <div
         style={{
           width: '220px',
           height: '335px',
           backgroundColor: 'rgba(255, 255, 255, 1)',
-      
         }}
       >
         <ul>
           {categories.map((category) => (
             <li
               key={category.id}
+              onMouseEnter={() => handleMouseEnter(category)}
             >
-              <Link href={category.link}
+              <Link
+                href={category.link}
                 style={{
                   fontFamily: 'Inter',
                   fontSize: '12px',
@@ -68,27 +78,46 @@ const CategorySection: React.FC = () => {
                   textDecoration: 'none',
                 }}
               >
-                  {category.title}
+                {category.title}
               </Link>
             </li>
           ))}
         </ul>
       </div>
 
-      {/* Additional Content Section */}
-      <div
-        style={{
-          width: '220px',
-          height: '335px',
-          backgroundColor: 'rgba(255, 255, 255, 1)',
-          marginLeft: '16px',
-          border: '1px solid rgba(0, 0, 0, 0.1)',
-          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-          padding: '16px',
-        }}
-      >
-      
-      </div>
+      {/* Child Categories */}
+      {hoveredCategory?.childrens && (
+        <div
+          style={{
+            width: '220px',
+            height: '335px',
+            backgroundColor: 'rgba(255, 255, 255, 1)',
+            border: '1px solid rgba(0, 0, 0, 0.1)',
+            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+            padding: '16px',
+          }}
+        >
+          <ul>
+            {hoveredCategory.childrens.map((child) => (
+              <li key={child.id}>
+                <Link
+                  href={child.link}
+                  style={{
+                    fontFamily: 'Inter',
+                    fontSize: '12px',
+                    fontWeight: 400,
+                    lineHeight: '15.6px',
+                    color: '#374151',
+                    textDecoration: 'none',
+                  }}
+                >
+                  {child.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
