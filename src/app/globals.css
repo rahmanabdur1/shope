@@ -2,3 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Category Container */
+#category-container {
+  display: flex;
+  font-family: Arial, sans-serif;
+}
+
+/* Category */
+.category {
+  position: relative;
+  background: #f4f4f4;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+/* Subcategory */
+.subcategory {
+  position: absolute;
+  top: -100%;
+  left: 100%;
+  display: none;
+  width: 200px;
+  height: 370px;
+  padding: 10px 20px;
+  background: #f4f4f4;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* Show Subcategory on Hover */
+.category:hover > .subcategory {
+  display: block;
+}
+
